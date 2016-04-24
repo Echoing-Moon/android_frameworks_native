@@ -433,8 +433,7 @@ status_t HWComposer::queryDisplayProperties(int disp) {
     }
 
     // FIXME: what should we set the format to?
-#ifdef OMAP_ENHANCEMENT
-    // Use pixel format native to DSS HW
+#ifdef USE_BGRA_8888
     mDisplayData[disp].format = HAL_PIXEL_FORMAT_BGRA_8888;
 #else
     mDisplayData[disp].format = HAL_PIXEL_FORMAT_RGBA_8888;
@@ -500,7 +499,11 @@ sp<Fence> HWComposer::getDisplayFence(int disp) const {
 
 uint32_t HWComposer::getFormat(int disp) const {
     if (static_cast<uint32_t>(disp) >= MAX_HWC_DISPLAYS || !mAllocatedDisplayIDs.hasBit(disp)) {
+#ifdef USE_BGRA_8888
+        return HAL_PIXEL_FORMAT_BGRA_8888;
+#else
         return HAL_PIXEL_FORMAT_RGBA_8888;
+#endif
     } else {
         return mDisplayData[disp].format;
     }
@@ -867,8 +870,7 @@ int HWComposer::getVisualID() const {
         // FIXME: temporary hack until HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED
         // is supported by the implementation. we can only be in this case
         // if we have HWC 1.1
-#ifdef OMAP_ENHANCEMENT
-        // Use pixel format native to DSS HW
+#ifdef USE_BGRA_8888
         return HAL_PIXEL_FORMAT_BGRA_8888;
 #else
         return HAL_PIXEL_FORMAT_RGBA_8888;
@@ -1347,7 +1349,11 @@ bool HWComposer::VSyncThread::threadLoop() {
 HWComposer::DisplayData::DisplayData()
 :   configs(),
     currentConfig(0),
+#ifdef USE_BGRA_8888
+    format(HAL_PIXEL_FORMAT_BGRA_8888),
+#else
     format(HAL_PIXEL_FORMAT_RGBA_8888),
+#endif
     connected(false),
     hasFbComp(false), hasOvComp(false),
     capacity(0), list(NULL),
