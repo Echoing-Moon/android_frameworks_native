@@ -86,6 +86,10 @@
 #include <android/hardware/configstore/1.0/ISurfaceFlingerConfigs.h>
 #include <configstore/Utils.h>
 
+#ifdef USES_HWC_SERVICES
+#include "ExynosHWCService.h"
+#endif
+
 #define DISPLAY_COUNT       1
 
 /*
@@ -120,6 +124,10 @@ bool SurfaceFlinger::hasSyncFramework;
 bool SurfaceFlinger::useVrFlinger;
 int64_t SurfaceFlinger::maxFrameBufferAcquiredBuffers;
 bool SurfaceFlinger::hasWideColorDisplay;
+
+#ifdef USES_HWC_SERVICES
+static bool notifyPSRExit = true;
+#endif
 
 SurfaceFlinger::SurfaceFlinger()
     :   BnSurfaceComposer(),
@@ -367,6 +375,14 @@ void SurfaceFlinger::bootFinished()
     // formerly we would just kill the process, but we now ask it to exit so it
     // can choose where to stop the animation.
     property_set("service.bootanim.exit", "1");
+
+#ifdef USES_HWC_SERVICES
+    sp<IServiceManager> sm = defaultServiceManager();
+    sp<android::IExynosHWCService> hwc =
+        interface_cast<android::IExynosHWCService>(sm->getService(String16("Exynos.HWCService")));
+    ALOGD("boot finished. Inform HWC");
+    hwc->setBootFinished();
+#endif
 
     const int LOGTAG_SF_STOP_BOOTANIM = 60110;
     LOG_EVENT_LONG(LOGTAG_SF_STOP_BOOTANIM,
@@ -1047,6 +1063,19 @@ void SurfaceFlinger::signalTransaction() {
 }
 
 void SurfaceFlinger::signalLayerUpdate() {
+#ifdef USES_HWC_SERVICES
+    if (notifyPSRExit) {
+        notifyPSRExit = false;
+        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IExynosHWCService> hwcService =
+            interface_cast<android::IExynosHWCService>(
+                sm->getService(String16("Exynos.HWCService")));
+        if (hwcService != NULL)
+            hwcService->notifyPSRExit();
+        else
+            ALOGE("HWCService::notifyPSRExit failed");
+    }
+#endif
     mEventQueue.invalidate();
 }
 
@@ -1394,6 +1423,9 @@ void SurfaceFlinger::handleMessageRefresh() {
     doDebugFlashRegions();
     doComposition();
     postComposition(refreshStartTime);
+#ifdef USES_HWC_SERVICES
+    notifyPSRExit = true;
+#endif
 
     mPreviousPresentFence = mHwc->getPresentFence(HWC_DISPLAY_PRIMARY);
 
