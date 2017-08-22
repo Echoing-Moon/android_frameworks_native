@@ -1044,7 +1044,7 @@ int Surface::dispatchSetBuffersTimestamp(va_list args) {
 
 int Surface::dispatchLock(va_list args) {
     ANativeWindow_Buffer* outBuffer = va_arg(args, ANativeWindow_Buffer*);
-    ARect* inOutDirtyBounds = va_arg(args, ARect*);
+    ARect2* inOutDirtyBounds = va_arg(args, ARect2*);
     return lock(outBuffer, inOutDirtyBounds);
 }
 
@@ -1575,7 +1575,7 @@ static status_t copyBlt(
 // ----------------------------------------------------------------------------
 
 status_t Surface::lock(
-        ANativeWindow_Buffer* outBuffer, ARect* inOutDirtyBounds)
+        ANativeWindow_Buffer* outBuffer, ARect2* inOutDirtyBounds)
 {
     if (mLockedBuffer != 0) {
         ALOGE("Surface::lock failed, already locked");

@@ -255,7 +255,7 @@ public:
     virtual int setSharedBufferMode(bool sharedBufferMode);
     virtual int setAutoRefresh(bool autoRefresh);
     virtual int setBuffersDimensions(uint32_t width, uint32_t height);
-    virtual int lock(ANativeWindow_Buffer* outBuffer, ARect* inOutDirtyBounds);
+    virtual int lock(ANativeWindow_Buffer* outBuffer, ARect2* inOutDirtyBounds);
     virtual int unlockAndPost();
     virtual int query(int what, int* value) const;
 

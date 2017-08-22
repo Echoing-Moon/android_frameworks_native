@@ -25,14 +25,36 @@
 #include <ui/FloatRect.h>
 #include <ui/Point.h>
 
-#include <android/rect.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct ARect2 {
+#ifdef __cplusplus
+    typedef int32_t value_type;
+#endif
+    /** left position */
+    int32_t left;
+    /** top position */
+    int32_t top;
+    /** left position */
+    int32_t right;
+    /** bottom position */
+    int32_t bottom;
+} ARect2;
+
+#ifdef __cplusplus
+};
+#endif
 
 namespace android {
 
-class Rect : public ARect, public LightFlattenablePod<Rect>
+class Rect : public ARect2, public LightFlattenablePod<Rect>
 {
 public:
-    typedef ARect::value_type value_type;
+    typedef ARect2::value_type value_type;
 
     static const Rect INVALID_RECT;
     static const Rect EMPTY_RECT;
