@@ -111,7 +111,7 @@ HWComposer::HWComposer(
     int fberr = loadFbHalModule();
     loadHwcModule();
 
-#ifdef OMAP_ENHANCEMENT
+#ifdef USE_BGRA_8888
     // FB HAL must stay open independent of HWC API version. Closing FB HAL will
     // result in destruction of flip chain and de-allocation of framebuffer.
 #else
@@ -171,7 +171,7 @@ HWComposer::HWComposer(
         }
     }
 
-#ifdef OMAP_ENHANCEMENT
+#ifdef USE_BGRA_8888
     if (!mHwc || !hwcHasApiVersion(mHwc, HWC_DEVICE_API_VERSION_1_1)) {
 #else
     if (mFbDev) {
