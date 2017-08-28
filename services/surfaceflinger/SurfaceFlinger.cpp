@@ -199,6 +199,9 @@ SurfaceFlinger::SurfaceFlinger()
     property_get("ro.bq.gpu_to_cpu_unsupported", value, "0");
     mGpuToCpuSupported = !atoi(value);
 
+    property_get("debug.sf.disable_hwc", value, "0");
+    mDebugDisableHWC = atoi(value);
+    
     property_get("debug.sf.showupdates", value, "0");
     mDebugRegion = atoi(value);
 
