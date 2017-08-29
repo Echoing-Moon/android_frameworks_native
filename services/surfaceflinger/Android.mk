@@ -105,7 +105,6 @@ ifeq ($(BOARD_USES_HWC_SERVICES), true)
     LOCAL_CFLAGS += -DUSES_HWC_SERVICES
     LOCAL_SHARED_LIBRARIES += libExynosHWCService
     LOCAL_C_INCLUDES += \
-        $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
         $(TOP)/hardware/samsung_slsi-$(TARGET_SLSI_VARIANT)/$(TARGET_BOARD_PLATFORM)/libhwcService \
         $(TOP)/hardware/samsung_slsi-$(TARGET_SLSI_VARIANT)/$(TARGET_BOARD_PLATFORM)/include \
         $(TOP)/hardware/samsung_slsi-$(TARGET_SLSI_VARIANT)/$(TARGET_SOC)/include \
